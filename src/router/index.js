@@ -3,28 +3,27 @@ import VueRouter from 'vue-router'
 
 Vue.use(VueRouter)
 
-const Home = { template: '<div>Home</div>'}
 const Login = { template: '<div>Login</div>'}
 const Logout = { template: '<div>Logout</div>'}
-const Post = { template: '<div><router-view></router-view></div>'}
-const PostList = { template: '<div>PostList</div>'}
-const PostView = { template: '<div>PostView</div>'}
-const PostNew = { template: '<div>PostNew</div>'}
+
+import Posts from '../components/Posts.vue'
+import Post from '../components/Post.vue'
+import NewPost from '../components/NewPost.vue'
 const PostRemove = { template: '<div>PostRemove</div>'}
+
 const NotFound = { template: '<div>Not Found</div>'}
 
 const router = new VueRouter({
   mode: 'history',
   routes: [
-    { path: '/', component: Home },
+    { path: '/', redirect: '/posts' },
     { path: '/login', component: Login },
     { path: '/logout', component: Logout },
-    { path: '/posts', component: Post, 
+    { path: '/posts', component: Posts, 
       children: [
-        { path: '', component: PostList },
-        { path: 'view/:id', component: PostView },
-        { path: 'new', component: PostNew },
-        { path: 'remove/:id', component: PostRemove },
+        { name: 'new_post', path: 'new', component: NewPost },
+        { name: 'post', path: ':id', component: Post },
+        { name: 'post_remove', path: ':id/remove', component: PostRemove },
       ]
    },
     { path: '*', component: NotFound }
