@@ -1,33 +1,38 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-
-Vue.use(VueRouter)
-
-const Login = { template: '<div>Login</div>'}
-const Logout = { template: '<div>Logout</div>'}
-
+import Login from '../components/Login.vue'
 import Posts from '../components/Posts.vue'
 import Post from '../components/Post.vue'
 import NewPost from '../components/NewPost.vue'
-const PostRemove = { template: '<div>PostRemove</div>'}
+import {Auth} from '../api'
 
-const NotFound = { template: '<div>Not Found</div>'}
+Vue.use(VueRouter)
 
-const router = new VueRouter({
+const requireAuth = (to, from, next) => {
+  if (Auth.loggedIn()) return next()
+  next({
+    path: '/login',
+    query: { redirect: to.fullPath }
+  })
+}
+
+export default new VueRouter({
   mode: 'history',
   routes: [
     { path: '/', redirect: '/posts' },
     { path: '/login', component: Login },
-    { path: '/logout', component: Logout },
+    { path: '/logout', 
+      beforeEnter(to, from, next) {
+        Auth.logout()
+        next('/')
+      } 
+    },
     { path: '/posts', component: Posts, 
       children: [
-        { name: 'new_post', path: 'new', component: NewPost },
+        { name: 'new_post', path: 'new', component: NewPost, beforeEnter: requireAuth },
         { name: 'post', path: ':id', component: Post },
-        { name: 'post_remove', path: ':id/remove', component: PostRemove },
       ]
-   },
-    { path: '*', component: NotFound }
+    },
+    { path: '*', component: { template: '<div>Not Found</div>'} }
   ]
 })
-
-export default router

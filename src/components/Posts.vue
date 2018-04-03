@@ -1,6 +1,7 @@
 <template>
   <div>
     <h2>Posts</h2>
+    <div v-if="loading">Loading...</div>
     <div v-for="post in posts" :key="post.id">
       <router-link :to="{ name: 'post', params: { id: post.id } }">
         [ID: {{post.id}}] {{post.text | summary}}
@@ -16,6 +17,7 @@ import { Post } from '../api/index'
 export default {
   data() {
     return {
+      loading: false,
       posts: []
     }
   },
@@ -29,8 +31,12 @@ export default {
   },
   methods: {
     fetchData() {
+      this.loading = true
       Post.list()
-      .then(data => this.posts = data) 
+      .then(data => {
+        this.posts = data
+        this.loading = false
+      }) 
     }
   }
 }

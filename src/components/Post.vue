@@ -15,7 +15,8 @@ import { Post } from '../api'
 export default {
   data() {
     return {
-      post: null
+      post: null,
+      loading: true
     }
   },
   created() {
